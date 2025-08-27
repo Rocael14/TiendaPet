@@ -79,9 +79,13 @@ class MetodosCRUD:
 class CRUDRolesEmpleado(MetodosCRUD):
     def __init__(self):
         self.roles = {}
+    def agregar(self):
+        pass
     def lista(self):
         for rol in self.roles.values():
             print(rol.id_rol, rol.nombre)
+
+
 class CRUDEmpleado(MetodosCRUD):
     def __init__(self):
         self.empleados = {}
@@ -127,6 +131,53 @@ class CRUDEmpleado(MetodosCRUD):
                     break
             except ValueError:
                 print("Error! Solo se permite ingreso numerico")
+
+    def lista(self):
+        print("--- Lista de Empleados ---")
+        if not self.empleados:
+            print("No hay empleados registrados")
+        else:
+            pass
+
+    def editar(self):
+        print("--- Editar Empleado ---")
+        self.lista()
+        id_empleado = input("Ingrese el ID del empleado a editar: ").upper()
+
+        if id_empleado in self.empleados:
+            empleado_editar = self.empleados[id_empleado]
+            print(f"Editando {empleado_editar.nombre}...")
+            print("Si no deseas cambiar el dato del empleado solo presiona enter")
+            input()
+            nuevo_nombre = input(f"Nuevo nombre ({empleado_editar.nombre}): ") or empleado_editar.nombre
+            try:
+                nuevo_telefono = int(input(f"Nuevo telefono ({empleado_editar.telefono}): "))
+            except ValueError:
+                print("AVISO: Queda el mismo numero de telefono")
+                nuevo_telefono = empleado_editar.telefono
+
+            nueva_direccion = input(f"Nueva dirección ({empleado_editar.direccion}): ") or empleado_editar.direccion
+            nuevo_correo = input(f"Nuevo correo ({empleado_editar.correo}): ") or empleado_editar.correo
+
+            empleado_editar.nombre = nuevo_nombre
+            empleado_editar.telefono = nuevo_telefono
+            empleado_editar.direccion = nueva_direccion
+            empleado_editar.correo = nuevo_correo
+
+            print("Empleado actualizado correctamente.")
+        else:
+            print("Error: ID no encontrado.")
+
+    def eliminar(self):
+        print("--- Eliminar Empleado ---")
+        self.lista()
+        id_empleado = input("Ingrese el ID del empleado a eliminar: ").upper()
+
+        if id_empleado in self.empleados:
+            self.empleados.pop(id_empleado)
+            print(f"Empleado eliminado correctamente.")
+        else:
+            print("Error: ID no encontrado.")
 
 ##############################################
 class MenuInventario:
