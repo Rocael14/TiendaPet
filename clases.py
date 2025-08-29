@@ -11,8 +11,8 @@ class Producto:
         self.stock = CalcularStock.calcular(total_cantidad_compras, total_cantidad_ventas)
 
 class Categoria:
-    def __init__(self, id_categoria, nombre):
-        self.id_categoria = id_categoria
+    def __init__(self, nombre):
+        self.id_categoria = GeneradorIdCategoria.generar_id()
         self.nombre = nombre
 
 class Clientes:
@@ -184,7 +184,7 @@ class CargarGuardarTiposPagos(CargarGuardar):
 
 class CargarGuardarEmpleados(CargarGuardar):
     def __init__(self):
-        self.empleados = {}  # Diccionario donde se almacenan
+        self.empleados = {}
 
     def cargar_empleados(self):
         try:
@@ -230,3 +230,58 @@ class CargarGuardarEmpleados(CargarGuardar):
                     f"{empleado.id_empleado}:{empleado.id_tipo_empleado}:{empleado.nombre}:{empleado.telefono}:{empleado.direccion}:{empleado.correo}\n"
                 )
         print("Datos guardados correctamente.")
+
+
+class CargarGuardarProductos(CargarGuardar):
+    def __init__(self):
+        self.productos = {}
+
+    def cargar_productos(self):
+        try:
+            with open("productos.txt", "r", encoding="utf-8") as archivo:
+                for linea in archivo:
+                    linea = linea.strip()
+                    if linea:
+                        datos = linea.split(":")
+                        if len(datos) == 6:
+                            id_producto, nombre, id_categoria, precio, compras, ventas = datos
+
+                            # Crear instancia de Producto
+                            nuevo_producto = Producto(
+                                nombre=nombre,
+                                id_categoria=id_categoria,
+                                precio=float(precio),
+                                total_cantidad_compras=int(compras),
+                                total_cantidad_ventas=int(ventas)
+                            )
+                            # Mantener ID del archivo
+                            nuevo_producto.id_producto = id_producto
+
+                            # Actualizar contador del generador
+                            if id_producto.startswith('P'):
+                                try:
+                                    num = int(id_producto[1:])
+                                    if num >= GeneradorIdProducto.contador:
+                                        GeneradorIdProducto.contador = num
+                                except ValueError:
+                                    pass
+
+                            # Guardar en el diccionario
+                            self.productos[id_producto] = nuevo_producto
+
+            print("Productos cargados desde productos.txt")
+        except FileNotFoundError:
+            print("No existe el archivo productos.txt, se creará cuando registre datos.")
+
+    def guardar(self):
+        with open("productos.txt", "w", encoding="utf-8") as archivo:
+            for producto in self.productos.values():
+                archivo.write(
+                    f"{producto.id_producto}:"
+                    f"{producto.nombre}:"
+                    f"{producto.id_categoria}:"
+                    f"{producto.precio}:"
+                    f"{producto.total_cantidad_compras}:"
+                    f"{producto.total_cantidad_ventas}\n"
+                )
+        print("Productos guardados en productos.txt")

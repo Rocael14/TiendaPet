@@ -1,5 +1,5 @@
 # crud.py
-from clases import Empleados, RolEmpleado, CargarGuardarTiposPagos, TipoDePago, CargarGuardarEmpleados
+from clases import Empleados, RolEmpleado, CargarGuardarTiposPagos, TipoDePago, CargarGuardarEmpleados,Categoria,Producto,CargarGuardarProductos
 
 class MetodosCRUD:
     def agregar(self): pass
@@ -83,6 +83,34 @@ class CRUDRolesEmpleado(MetodosCRUD, RolEmpleado):
             for id_rol, rol in self.roles.items():
                 print(f"{rol.id_rol} - {rol.nombre_rol}")
 
+class CRUDCategoria(MetodosCRUD, Categoria):
+    def __init__(self):
+        self.categoria = {}
+        self.cargar_categorias()
+
+    def cargar_categorias(self):
+        try:
+            with open("categoria.txt", "r", encoding="utf-8") as archivo:
+                for linea in archivo:
+                    linea = linea.strip()
+                    if linea:
+                        id_categoria, nombre = linea.split(":")
+                        self.categoria[id_categoria] = Categoria(nombre)
+            print("Categorias importados exitosamente")
+        except FileNotFoundError:
+            print("No existe el archivo 'roles.txt'")
+
+    def agregar(self):
+        pass
+
+    def lista(self):
+        print("--- Lista de Roles ---")
+        if not self.categoria:
+            print("No hay roles registrados")
+        else:
+            for id_categoria, categoria in self.categoria.items():
+                print(f"{categoria.id_categoria} - {categoria.nombre}")
+
 class CRUDEmpleado(MetodosCRUD, CargarGuardarEmpleados):
     def __init__(self):
         super().__init__()
@@ -159,3 +187,83 @@ class CRUDEmpleado(MetodosCRUD, CargarGuardarEmpleados):
         else:
             print("Error: ID no encontrado.")
 
+class CRUDProducto(MetodosCRUD,CargarGuardarProductos):
+    def __init__(self):
+        super().__init__()
+        self.cargar_productos()
+
+    def agregar(self):
+        categorias = CRUDCategoria()
+        print("\n--- Crear Producto ---")
+        nombre_producto = input("Nombre del producto: ")
+        precio = float(input("Precio del producto: "))
+
+        # seleccionar categoría válida
+        while True:
+            print("Seleccione la categoría")
+            categorias.lista()
+            id_categoria = input("Categoría: ").upper()
+            if id_categoria in categorias.categoria:
+                break
+            else:
+                print("Error: Categoría no existe, intente de nuevo.")
+
+        nuevo_producto = Producto(
+            nombre=nombre_producto,
+            id_categoria=id_categoria,
+            precio=precio,
+            total_cantidad_compras=0,
+            total_cantidad_ventas=0
+        )
+        self.productos[nuevo_producto.id_producto] = nuevo_producto
+        print(f"Producto {nuevo_producto.nombre} agregado exitosamente")
+
+        self.guardar()
+
+    def lista(self):
+        print("\n--- Lista de Productos ---")
+        if not self.productos:
+            print("No hay productos registrados.")
+        else:
+            for producto in self.productos.values():
+                print(
+                    f"[{producto.id_producto}] {producto.nombre} | "
+                    f"Categoría: {producto.id_categoria} | "
+                    f"Precio: {producto.precio} | "
+                    f"Compras: {producto.total_cantidad_compras} | "
+                    f"Ventas: {producto.total_cantidad_ventas} | "
+                    f"Stock: {producto.stock}"
+                )
+
+    def editar(self):
+        self.lista()
+        id_editar = input("\nIngrese el ID del producto a editar: ").upper()
+        if id_editar in self.productos:
+            producto = self.productos[id_editar]
+            print(f"Editando producto {producto.nombre}")
+
+            nuevo_nombre = input(f"Nuevo nombre ({producto.nombre}): ") or producto.nombre
+            try:
+                nuevo_precio = float(input(f"Nuevo precio ({producto.precio}): ")) or producto.precio
+            except ValueError:
+                print("Precio inválido, se mantiene el anterior")
+                nuevo_precio = producto.precio
+
+
+            producto.nombre = nuevo_nombre
+            producto.precio = nuevo_precio
+
+            print("Producto editado correctamente.")
+            self.guardar()
+        else:
+            print("No existe un producto con ese ID")
+
+    def eliminar(self):
+        self.lista()
+        id_eliminar = input("\nIngrese el ID del producto a eliminar: ").upper()
+        if id_eliminar in self.productos:
+            eliminado = self.productos.pop(id_eliminar)
+            print(f"Producto '{eliminado.nombre}' eliminado correctamente.")
+            self.guardar()
+        else:
+            print("No existe un producto con ese ID")

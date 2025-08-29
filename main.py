@@ -1,6 +1,6 @@
 # main.py
 from menus import MenuInventario, MenuVentas, MenuUsuario, MenuReportes
-from crud import CRUDEmpleado
+from crud import CRUDEmpleado, CRUDProducto
 def main():
     while True:
         print("--- MENU PRINCIPAL ---")
@@ -13,7 +13,23 @@ def main():
         opcion = int(input("Seleccione una opción: "))
 
         if opcion == 1:
-            MenuInventario().menu_inventario()
+            while True:
+                MenuInventario().menu_inventario()
+                opcion_inventario = int(input("Seleccione una opcion: "))
+                if opcion_inventario == 1:
+                    CRUDProducto().agregar()
+                elif opcion_inventario == 2:
+                    pass
+                elif opcion_inventario == 3:
+                    CRUDProducto().lista()
+                elif opcion_inventario == 4:
+                    CRUDProducto().editar()
+                elif opcion_inventario == 5:
+                    CRUDProducto().eliminar()
+                elif opcion_inventario == 6:
+                    break
+                else:
+                    pass
         elif opcion == 2:
             MenuVentas().menu_ventas()
         elif opcion == 3:
@@ -22,7 +38,6 @@ def main():
                 opcion_usuario = int(input("Seleccione una opcion: "))
                 if opcion_usuario == 1:
                     CRUDEmpleado().agregar()
-                    opcion = 3
                 elif opcion_usuario == 2:
                     CRUDEmpleado().editar()
                 elif opcion_usuario == 3:
