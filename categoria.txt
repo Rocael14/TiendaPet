@@ -1,0 +1,6 @@
+C1:Perros
+C2:Gatos
+C3:Aves
+C4:Peces
+C5:Roedores
+C6:Reptiles

@@ -1,0 +1,4 @@
+TP1:Efectivo
+TP2:Tarjeta
+TP3:Transferencia
+

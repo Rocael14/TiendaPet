@@ -1,0 +1,4 @@
+R1:Administrador
+R2:Asistente
+R3:Cajero
+R4:Bodegero
