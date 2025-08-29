@@ -10,28 +10,30 @@ def main():
         print("4. Reportes")
         print("5. Salir")
 
-        opcion = input("Seleccione una opción: ")
+        opcion = int(input("Seleccione una opción: "))
 
-        if opcion == "1":
+        if opcion == 1:
             MenuInventario().menu_inventario()
-        elif opcion == "2":
+        elif opcion == 2:
             MenuVentas().menu_ventas()
-        elif opcion == "3":
-            MenuUsuario().menu_usuario()
-            opcion_usuario = int(input("Seleccione una opcion"))
-            if opcion_usuario == 1:
-                CRUDEmpleado().agregar()
-            elif opcion_usuario == 2:
-                CRUDEmpleado().editar()
-            elif opcion_usuario == 3:
-                CRUDEmpleado().eliminar()
-            elif opcion_usuario == 4:
-                CRUDEmpleado().lista()
-            elif opcion_usuario == 5:
-                main()
-        elif opcion == "4":
+        elif opcion == 3:
+            while True:
+                MenuUsuario().menu_usuario()
+                opcion_usuario = int(input("Seleccione una opcion: "))
+                if opcion_usuario == 1:
+                    CRUDEmpleado().agregar()
+                    opcion = 3
+                elif opcion_usuario == 2:
+                    CRUDEmpleado().editar()
+                elif opcion_usuario == 3:
+                    CRUDEmpleado().eliminar()
+                elif opcion_usuario == 4:
+                    CRUDEmpleado().lista()
+                elif opcion_usuario == 5:
+                    break
+        elif opcion == 4:
             MenuReportes().menu_reportes()
-        elif opcion == "5":
+        elif opcion == 5:
             print("Saliendo del sistema...")
             break
         else:
